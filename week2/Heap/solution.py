@@ -45,9 +45,9 @@ class MinHeap:
                 self.swap(index, parent_index)
                 self.sift_up(parent_index)
 
-    def change_priority(self, index, new_priority, concat=False):
+    def change_priority(self, index, new_priority):
         old_priority = self.data[index]
-        self.data[index] = new_priority if not concat else old_priority + new_priority
+        self.data[index] = new_priority
         if new_priority > old_priority:
             self.sift_down(index)
         else:
