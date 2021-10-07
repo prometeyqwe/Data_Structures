@@ -1,6 +1,3 @@
-from sys import stdin
-
-
 class MinHeap:
     def __init__(self, size, data=None):
         self.size = 0
@@ -16,7 +13,6 @@ class MinHeap:
         self.sift_up(self.size - 1)
 
     def extract_min(self):
-
         self.swap(0, self.size-1)
         print("extract_min::swap_result: {0}".format(self.data))
         _min = self.data.pop(self.size-1)

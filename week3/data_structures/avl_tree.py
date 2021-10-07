@@ -10,10 +10,26 @@ class Node:
         self.height = 1
 
     def small_turn_right(self):
-        pass
+        self.left.parent = self.parent
+        self.parent.right = self.left
+        self.left.right = self
+        self.parent = self.left
 
     def small_turn_left(self):
-        pass
+        new_root = None
+        tmp = self.right.left
+        self.right.left = self
+        self.right.parent = self.parent
+        if self.parent is None:
+            new_root = self.right  # therefore self is root of AVL Tree and we need change root
+        if self.parent is not None:
+            self.parent.right = self.right
+        self.right = tmp
+        if tmp:
+            self.parent = tmp.parent
+            tmp.parent = self
+
+        return new_root
 
     def big_turn_right(self):
         pass
@@ -33,6 +49,7 @@ class Node:
                     ) + 1
 
     def balance(self):
+        new_root = None
         is_balanced, height_diff = self.is_balanced()
         if not is_balanced:
             if height_diff < 0:
@@ -42,7 +59,7 @@ class Node:
                 if tmp_diff >= 0:
                     """big turn left"""
                 else:
-                    """turn left"""
+                    new_root = self.small_turn_left()
             else:
                 # left subtree height more then right
                 tmp_balanced, tmp_diff = self.is_balanced()
@@ -51,14 +68,7 @@ class Node:
                 else:
                     """big turn right"""
 
-            # if not turn_to_right:
-            #     """ doing turn left """
-            # else:
-            #     """ doing turn right """
-            #     self.left.parent = self.parent
-            #     self.parent.right = self.left
-            #     self.left.right = self
-            #     self.parent = self.left
+        return new_root
 
 
 class AvlTree:
@@ -81,7 +91,9 @@ class AvlTree:
                     node.left = Node(key)
                     node.left.parent = node
             node.update_height()
-            node.balance()
+            new_root = node.balance()
+            node.update_height()
+            self.root = new_root or self.root
         else:
             self.root = Node(key)  # node == self.root only
 
@@ -146,20 +158,36 @@ class AvlTree:
 
 if __name__ == "__main__":
     avl_tree = AvlTree()
+    # avl_tree.add(1)
+    # avl_tree.add(0)
+    # avl_tree.add(5)
+    # avl_tree.add(4)
+    # avl_tree.add(3)
+    #
+    # print(avl_tree.find(1))
+    # print(avl_tree.find(3))
+    # print(avl_tree.find(2))
+    # print(avl_tree.find(0))
+    # print(avl_tree.find(-2))
+    #
+    # print(f"max: {avl_tree.get_max_of_tree()}")
+    # print(f"min: {avl_tree.get_min_of_tree()}")
+    # print(f"next after 1: {avl_tree.next_element_after(1)}")
+    # print(f"next after 3: {avl_tree.next_element_after(3)}")
+    # print(f"next after 5: {avl_tree.next_element_after(5)}")
+
+    # avl_tree.add(1)
+    # avl_tree.add(0)
+    # avl_tree.add(3)
+    # avl_tree.add(2)
+    # avl_tree.add(4)
+    # avl_tree.add(5)
+
     avl_tree.add(1)
     avl_tree.add(0)
-    avl_tree.add(5)
-    avl_tree.add(4)
+    avl_tree.add(2)
     avl_tree.add(3)
-
-    print(avl_tree.find(1))
-    print(avl_tree.find(3))
-    print(avl_tree.find(2))
-    print(avl_tree.find(0))
-    print(avl_tree.find(-2))
-
-    print(f"max: {avl_tree.get_max_of_tree()}")
-    print(f"min: {avl_tree.get_min_of_tree()}")
-    print(f"next after 1: {avl_tree.next_element_after(1)}")
-    print(f"next after 3: {avl_tree.next_element_after(3)}")
-    print(f"next after 5: {avl_tree.next_element_after(5)}")
+    avl_tree.add(4)
+    # avl_tree.add(5)
+    # GOTO: проверить родителей у вершин в обоих примерах
+    print("qwe")
