@@ -1,6 +1,3 @@
-from typing import Mapping
-
-
 class Node:
     def __init__(self, key):
         self.parent = None
@@ -10,32 +7,42 @@ class Node:
         self.height = 1
 
     def small_turn_right(self):
-        self.left.parent = self.parent
-        self.parent.right = self.left
-        self.left.right = self
-        self.parent = self.left
+        new_root = self.left
+        new_root.parent = None
+        self.left = new_root.right
+        if self.left is not None:
+            self.left.parent = self
+        new_root.right = self
+        self.parent = new_root
+        new_root.update_height()
+        self.update_height()
+
+        return new_root
 
     def small_turn_left(self):
-        new_root = None
-        tmp = self.right.left
-        self.right.left = self
-        self.right.parent = self.parent
-        if self.parent is None:
-            new_root = self.right  # therefore self is root of AVL Tree and we need change root
-        if self.parent is not None:
-            self.parent.right = self.right
-        self.right = tmp
-        if tmp:
-            self.parent = tmp.parent
-            tmp.parent = self
+        new_root = self.right
+        new_root.parent = None
+        self.right = new_root.left
+        if self.right is not None:
+            self.right.parent = self
+        new_root.left = self
+        self.parent = new_root
+        self.update_height()
+        new_root.update_height()
 
         return new_root
 
     def big_turn_right(self):
-        pass
+        self.left = self.left.small_turn_left()
+        new_root = self.small_turn_right()
+
+        return new_root
 
     def big_turn_left(self):
-        pass
+        self.right = self.right.small_turn_right()
+        new_root = self.small_turn_left()
+
+        return new_root
 
     def is_balanced(self):
         right_height = self.right.height if self.right else 0
@@ -44,8 +51,8 @@ class Node:
 
     def update_height(self):
         self.height = max(
-                        self.left.height if self.left else 1, 
-                        self.right.height if self.right else 1
+                        self.left.height if self.left else 0,
+                        self.right.height if self.right else 0
                     ) + 1
 
     def balance(self):
@@ -54,10 +61,9 @@ class Node:
         if not is_balanced:
             if height_diff < 0:
                 # right subtree height more then left
-                pass
                 tmp_balanced, tmp_diff = self.right.is_balanced()
                 if tmp_diff >= 0:
-                    """big turn left"""
+                    new_root = self.big_turn_left()
                 else:
                     new_root = self.small_turn_left()
             else:
@@ -65,8 +71,10 @@ class Node:
                 tmp_balanced, tmp_diff = self.is_balanced()
                 if tmp_diff >= 0:
                     """turn right"""
+                    new_root = self.small_turn_right()
                 else:
                     """big turn right"""
+                    new_root = self.big_turn_right()
 
         return new_root
 
@@ -92,7 +100,7 @@ class AvlTree:
                     node.left.parent = node
             node.update_height()
             new_root = node.balance()
-            node.update_height()
+            # node.update_height()
             self.root = new_root or self.root
         else:
             self.root = Node(key)  # node == self.root only
@@ -183,11 +191,16 @@ if __name__ == "__main__":
     # avl_tree.add(4)
     # avl_tree.add(5)
 
-    avl_tree.add(1)
-    avl_tree.add(0)
-    avl_tree.add(2)
-    avl_tree.add(3)
-    avl_tree.add(4)
+    # avl_tree.add(1)
+    # avl_tree.add(0)
+    # avl_tree.add(2)
+    # avl_tree.add(3)
+    # avl_tree.add(4)
     # avl_tree.add(5)
     # GOTO: проверить родителей у вершин в обоих примерах
+
+    avl_tree.add(1)
+    avl_tree.add(2)
+    avl_tree.add(3)
+
     print("qwe")
