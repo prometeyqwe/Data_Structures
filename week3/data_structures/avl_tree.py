@@ -60,7 +60,7 @@ class Node:
         is_balanced, height_diff = self.is_balanced()
         if not is_balanced:
             if height_diff < 0:
-                # right subtree height more then left
+                # right subtree height more than left
                 tmp_balanced, tmp_diff = self.right.is_balanced()
                 if tmp_diff >= 0:
                     new_root = self.big_turn_left()
@@ -120,21 +120,72 @@ class AvlTree:
         return result
 
     def delete(self, key):
-        pass
+        target = self.find(key)
+        target_parent = target.parent
+        if target is not None:
+            if target.left is not None and target.right is not None:
+                target_key = target.key
+                target_left = target.left
+                target_right = target.right
+
+                new_target = self.get_max_of_tree(target_left)
+                new_target_parent = new_target.parent
+
+                target.left = new_target.left
+                target.right = None
+                target.key = new_target.key
+                target.parent = new_target_parent
+                new_target_parent.right = target
+
+                new_target.left = target_left
+                new_target.right = target_right
+                new_target.parent = target_parent
+
+                if target_parent.key > target_key:
+                    target_parent.left = new_target
+                else:
+                    target_parent.right = new_target
+                # TODO: add update height
+            elif target.left is not None:
+                parent = target.parent
+                if parent.key < target.key:
+                    parent.right = target.left
+                else:
+                    parent.left = target.left
+                # TODO: add update height
+            elif target.right is not None:
+                parent = target.parent
+                if parent.key < target.key:
+                    parent.right = target.right
+                else:
+                    parent.left = target.right
+                # TODO: add update height
+            else:
+                parent = target.parent
+                if parent.key < target.key:
+                    parent.right = None
+                else:
+                    parent.left = None
+                parent.update_height()
+                while parent.parent is not None:
+                    parent = parent.parent
+                    parent.update_height()
+        else:
+            print(f"target node with {key} key not found")
 
     def get_min_of_tree(self, node=None):
         node = node or self.root
         if node and node.left:
             return self.get_min_of_tree(node.left)
         else:
-            return node.key if node else None
+            return node
 
     def get_max_of_tree(self, node=None):
         node = node or self.root
         if node and node.right:
             return self.get_max_of_tree(node.right)
         else:
-            return node.key if node else None
+            return node
 
     def next_element_after(self, key):
         next_element = None
@@ -157,9 +208,6 @@ class AvlTree:
     def merge_trees(self):
         pass
 
-    def __getitem__(self):
-        pass
-    
 
 if __name__ == "__main__":
     avl_tree = AvlTree()
@@ -196,8 +244,9 @@ if __name__ == "__main__":
     # avl_tree.add(5)
     # GOTO: проверить родителей у вершин в обоих примерах
 
-    avl_tree.add(1)
     avl_tree.add(2)
+    avl_tree.add(1)
     avl_tree.add(3)
-
+    avl_tree.add(4)
     print("qwe")
+    avl_tree.delete(4)
