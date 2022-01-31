@@ -70,10 +70,8 @@ class Node:
                 # left subtree height more then right
                 tmp_balanced, tmp_diff = self.is_balanced()
                 if tmp_diff >= 0:
-                    """turn right"""
                     new_root = self.small_turn_right()
                 else:
-                    """big turn right"""
                     new_root = self.big_turn_right()
 
         return new_root
@@ -100,7 +98,6 @@ class AvlTree:
                     node.left.parent = node
             node.update_height()
             new_root = node.balance()
-            # node.update_height()
             self.root = new_root or self.root
         else:
             self.root = Node(key)  # node == self.root only
