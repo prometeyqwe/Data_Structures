@@ -119,57 +119,59 @@ class AvlTree:
             result = node
         return result
 
-    def delete(self, key):
-        target = self.find(key)
-        target_parent = target.parent
+    def delete(self, key, targetNode=None):
+        target = self.find(key) if targetNode is None else targetNode
         if target is not None:
             if target.left is not None and target.right is not None:
-                target_key = target.key
                 target_left = target.left
-                target_right = target.right
-
                 new_target = self.get_max_of_tree(target_left)
-                new_target_parent = new_target.parent
-
-                target.left = new_target.left
-                target.right = None
                 target.key = new_target.key
-                target.parent = new_target_parent
-                new_target_parent.right = target
-
-                new_target.left = target_left
-                new_target.right = target_right
-                new_target.parent = target_parent
-
-                if target_parent.key > target_key:
-                    target_parent.left = new_target
-                else:
-                    target_parent.right = new_target
-                # TODO: add update height
+                self.delete(0, targetNode=new_target)
             elif target.left is not None:
                 parent = target.parent
-                if parent.key < target.key:
-                    parent.right = target.left
+                left_child = target.left
+                if parent is not None:
+                    if parent.key < target.key:
+                        parent.right = left_child
+                    else:
+                        parent.left = left_child
+                    parent.update_height()
+                    while parent.parent is not None:
+                        parent = parent.parent
+                        parent.update_height()
                 else:
-                    parent.left = target.left
-                # TODO: add update height
+                    self.root = left_child
+                    self.root.parent = None
             elif target.right is not None:
                 parent = target.parent
-                if parent.key < target.key:
-                    parent.right = target.right
+                right_child = target.right
+                if parent is not None:
+                    if parent.key < target.key:
+                        parent.right = right_child
+                        right_child.parent = parent
+                    else:
+                        parent.left = right_child
+                        right_child.parent = parent
+                    parent.update_height()
+                    while parent.parent is not None:
+                        parent = parent.parent
+                        parent.update_height()
                 else:
-                    parent.left = target.right
-                # TODO: add update height
+                    self.root = right_child
+                    self.root.parent = None
             else:
                 parent = target.parent
-                if parent.key < target.key:
-                    parent.right = None
-                else:
-                    parent.left = None
-                parent.update_height()
-                while parent.parent is not None:
-                    parent = parent.parent
+                if parent is not None:
+                    if parent.key < target.key:
+                        parent.right = None
+                    else:
+                        parent.left = None
                     parent.update_height()
+                    while parent.parent is not None:
+                        parent = parent.parent
+                        parent.update_height()
+                else:
+                    self.root = None
         else:
             print(f"target node with {key} key not found")
 
@@ -244,9 +246,37 @@ if __name__ == "__main__":
     # avl_tree.add(5)
     # GOTO: проверить родителей у вершин в обоих примерах
 
-    avl_tree.add(2)
+    # avl_tree.add(2)
+    # avl_tree.add(1)
+    # avl_tree.add(3)
+    # avl_tree.add(4)
+    # print("qwe")
+    # avl_tree.delete(4)
+
+    # avl_tree.add(2)
+    # avl_tree.add(1)
+    # avl_tree.add(5)
+    # avl_tree.add(0)
+    # avl_tree.add(3)
+    # avl_tree.add(6)
+    # avl_tree.add(4)
+    # avl_tree.delete(5)
+    # print("qwe")
+
+    # avl_tree.add(1)
+    # avl_tree.add(0)
+    # avl_tree.add(2)
+    # print("qwe")
+    # avl_tree.delete(1)
+    # print("qwe")
+
+    # avl_tree.add(1)
+    # avl_tree.add(0)
+    # print("qwe")
+    # avl_tree.delete(1)
+    # print("qwe")
+
     avl_tree.add(1)
-    avl_tree.add(3)
-    avl_tree.add(4)
     print("qwe")
-    avl_tree.delete(4)
+    avl_tree.delete(1)
+    print("qwe")
